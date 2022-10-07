@@ -130,10 +130,6 @@ test_certificate_staging ()
   echo
   say @green[["Successfully obtained a test (Let's Encrypt Staging) certificate for ${DOMAIN}!"]]
   say @b@green[["You may now go ahead and use: manage-vhosts --create ${DOMAIN}!"]]
-
-  acme.sh --revoke -d "${DOMAIN}"
-  acme.sh --remove -d "${DOMAIN}"
-  rm -rf /acmecerts/"${DOMAIN}"
 }
 
 find_public_ip ()
