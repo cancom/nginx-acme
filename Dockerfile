@@ -2,7 +2,7 @@ FROM nginx:1.23.1
 LABEL maintainer="Sina Anvari <sina.anvari@cancom.de>"
 
 # Install cron
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
   cron \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
@@ -25,8 +25,3 @@ COPY files/manage-vhosts.sh /root/
 COPY files/logrotate /etc/logrotate.d/nginx-acme
 COPY files/acme-cron-generator.sh /docker-entrypoint.d/99-acme-cron-generator.sh
 RUN ln -s /root/manage-vhosts.sh /usr/local/bin/manage-vhosts
-
-#EXPOSE 80
-#STOPSIGNAL SIGQUIT
-#ENTRYPOINT ["/docker-entrypoint.sh"]
-#CMD ["nginx", "-g", "daemon off;"]
