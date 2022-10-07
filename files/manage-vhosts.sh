@@ -57,13 +57,16 @@ create_vhost ()
   if [ -d "/acmecerts/${DOMAIN}" ]; then
     if openssl x509 -noout -issuer -in "/acmecerts/${DOMAIN}/ca.cer" | grep -ci staging; then
 
-      say @b@red[["vHost for ${DOMAIN} already exists with staging issuer."]]
+      say @b@red[["Certificate for ${DOMAIN} already exists with staging issuer."]]
       say @b@red[["Do you want to remove it?"]]
 
-      read -p "Are you REALLY REALLY sure? " -n 1 -r
+      read -p "Are you REALLY REALLY sure? (y/n) " -n 1 -r
       echo
       if [[ $REPLY =~ ^[Yy]$ ]]; then
         rm -rf "/acmecerts/${DOMAIN}"
+      else
+        say @b@red[["Nothing to do. Exiting"]]
+        exit 1
       fi
     fi
   fi
@@ -97,7 +100,7 @@ delete_vhost ()
 {
   say @b@red[["This will remove vHost configuration and certificates for ${DOMAIN}."]]
   say @b@red[["This is irreversible!"]]
-  read -p "Are you REALLY REALLY sure? " -n 1 -r
+  read -p "Are you REALLY REALLY sure? (y/n) " -n 1 -r
   echo
   if [[ $REPLY =~ ^[Yy]$ ]]; then
       if [ -f "/etc/nginx/sites-enabled/${DOMAIN}.conf" ]; then 
