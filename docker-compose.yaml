@@ -1,0 +1,28 @@
+version: '3.2'
+services:
+  nginx:
+    image: nginx-acme:latest
+    container_name: nginx-acme
+    restart: always
+    volumes:
+      - nginx-conf:/etc/nginx
+      - www:/var/www
+      - acme-sh-conf:/acme.sh
+      - acme-sh-certs:/acmecerts
+    ports:
+      - 80:80
+      - 443:443
+
+volumes:
+  nginx-conf:
+  www:
+  acme-sh-conf:
+  acme-sh-certs:
+
+# in case your default interface has higher MTU than docker interfaces
+# learn more: https://mlohr.com/docker-mtu/
+#networks:
+#  default:
+#    driver: bridge
+#    driver_opts:
+#      com.docker.network.driver.mtu: 1450
