@@ -100,7 +100,7 @@ delete_vhost ()
   read -p "Are you REALLY REALLY sure? " -n 1 -r
   echo
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-      if [ -f "rm /etc/nginx/sites-enabled/${DOMAIN}.conf" ]; then 
+      if [ -f "/etc/nginx/sites-enabled/${DOMAIN}.conf" ]; then 
         rm /etc/nginx/sites-available/"${DOMAIN}".conf /etc/nginx/sites-enabled/"${DOMAIN}".conf
       else
         say @b@yellow[["Site was already deactivated. Skipping."]]
