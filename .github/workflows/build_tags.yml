@@ -1,0 +1,48 @@
+name: "build-tags"
+
+on:
+  push:
+    branches-ignore:
+      - "**"
+    tags:
+      - "v[1-9].[0-9]+.[0-9]+-nginx[1-9].[0-9]+.[0-9]+"
+
+jobs:
+  docker_buildx_debian:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract version numbers from GitHub reference
+        id: tagger
+        run: bash .github/extract_version.sh ${GITHUB_REF}
+
+      - name: Build and push all Debian images
+        uses: docker/build-push-action@v3.1.0
+        with:
+          context: ./src
+          file: ./src/Dockerfile
+          platforms: |
+            linux/amd64
+            linux/386
+            linux/arm64
+            linux/arm/v7
+          pull: true
+          no-cache: true
+          push: true
+          tags: |
+            cancomtest/nginx-acme:${{ steps.tagger.outputs.APP_MAJOR }}
+            cancomtest/nginx-acme:${{ steps.tagger.outputs.APP_MAJOR }}.${{ steps.tagger.outputs.APP_MINOR }}
+            cancomtest/nginx-acme:${{ steps.tagger.outputs.APP_MAJOR }}.${{ steps.tagger.outputs.APP_MINOR }}.${{ steps.tagger.outputs.APP_PATCH }}
+            cancomtest/nginx-acme:${{ steps.tagger.outputs.APP_MAJOR }}.${{ steps.tagger.outputs.APP_MINOR }}.${{ steps.tagger.outputs.APP_PATCH }}-nginx${{ steps.tagger.outputs.NGINX_VERSION }}
