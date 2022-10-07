@@ -23,7 +23,7 @@ RUN rm -rf /etc/nginx
 COPY files/nginx-conf /etc/nginx
 COPY files/manage-vhosts.sh /root/
 COPY files/logrotate /etc/logrotate.d/nginx-acme
-COPY files/acme-cron-generator.sh /docker-entrypoint.d/acme-cron-generator.sh
+COPY files/acme-cron-generator.sh /docker-entrypoint.d/99-acme-cron-generator.sh
 RUN ln -s /root/manage-vhosts.sh /usr/local/bin/manage-vhosts
 
 #EXPOSE 80
