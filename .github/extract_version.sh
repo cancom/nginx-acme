@@ -8,9 +8,9 @@ if [ -z "${1}" ]; then
 fi
 echo "Received the following input argument: '${1}'"
 
-app_major=$(echo ${1} | sed -n -r -e 's&^refs/.+/v([1-9])\.[0-9]+\.[0-9]+.*$&\1&p')
-app_minor=$(echo ${1} | sed -n -r -e 's&^refs/.+/v[1-9]\.([0-9]+)\.[0-9]+.*$&\1&p')
-app_patch=$(echo ${1} | sed -n -r -e 's&^refs/.+/v[1-9]\.[0-9]+\.([0-9]+).*$&\1&p')
+app_major=$(echo ${1} | sed -n -r -e 's&^refs/.+/v([0-9])\.[0-9]+\.[0-9]+.*$&\1&p')
+app_minor=$(echo ${1} | sed -n -r -e 's&^refs/.+/v[0-9]\.([0-9]+)\.[0-9]+.*$&\1&p')
+app_patch=$(echo ${1} | sed -n -r -e 's&^refs/.+/v[0-9]\.[0-9]+\.([0-9]+).*$&\1&p')
 nginx_version=$(echo ${1} | sed -n -r -e 's&^refs/.+/.*-nginx([1-9]\.[0-9]+\.[0-9]+)$&\1&p')
 
 if [ -n "${app_major}" -a -n "${app_minor}" -a -n "${app_patch}" -a -n "${nginx_version}" ]; then
