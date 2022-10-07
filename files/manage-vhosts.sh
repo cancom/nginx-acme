@@ -53,6 +53,24 @@ create_vhost ()
     say @b@red[["Exiting.."]]
     exit 1
   fi
+
+  if [ -d "/acmecerts/${DOMAIN}" ]; then
+    if openssl x509 -noout -issuer -in "/acmecerts/${DOMAIN}/ca.cer" | grep -ci staging; then
+
+      say @b@red[["Certificate for ${DOMAIN} already exists with staging issuer."]]
+      say @b@red[["Do you want to remove it?"]]
+
+      read -p "Are you REALLY REALLY sure? (y/n) " -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm -rf "/acmecerts/${DOMAIN}"
+      else
+        say @b@red[["Nothing to do. Exiting"]]
+        exit 1
+      fi
+    fi
+  fi
+
   acme.sh --issue --domain "${DOMAIN}" --webroot /var/www/_letsencrypt --keylength 4096
   if [ $? -ne 0 ]; then
     echo
@@ -80,21 +98,27 @@ create_vhost ()
 
 delete_vhost ()
 {
-  if [ ! -f /etc/nginx/sites-available/"${DOMAIN}".conf ] || [ ! -d /acmecerts/"$DOMAIN" ]; then
-    say @yellow[["No vHost or certificate found for ${DOMAIN}."]]
-    say @yellow[["Nothing to do. Exiting.."]]
-    exit
-  fi
   say @b@red[["This will remove vHost configuration and certificates for ${DOMAIN}."]]
   say @b@red[["This is irreversible!"]]
-  read -p "Are you REALLY REALLY sure? " -n 1 -r
+  read -p "Are you REALLY REALLY sure? (y/n) " -n 1 -r
   echo
   if [[ $REPLY =~ ^[Yy]$ ]]; then
-      rm /etc/nginx/sites-available/"${DOMAIN}".conf /etc/nginx/sites-enabled/"${DOMAIN}".conf
-      acme.sh --revoke "${DOMAIN}"
-      acme.sh --remove "${DOMAIN}"
-      rm -rf /acmecerts/"${DOMAIN}"
+      if [ -f "/etc/nginx/sites-enabled/${DOMAIN}.conf" ]; then 
+        rm /etc/nginx/sites-available/"${DOMAIN}".conf /etc/nginx/sites-enabled/"${DOMAIN}".conf
+      else
+        say @b@yellow[["Site was already deactivated. Skipping."]]
+      fi
+
+      if [ -d "/acmecerts/${DOMAIN}" ]; then
+        acme.sh --revoke -d "${DOMAIN}"
+        acme.sh --remove -d "${DOMAIN}"
+    	rm -rf /acmecerts/"${DOMAIN}"
+      else
+        say @b@yellow[["Certificate was already revoked. Skipping."]]
+      fi
   fi
+
+  nginx -t && /etc/init.d/nginx reload
 }
 
 test_certificate_staging ()
