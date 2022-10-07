@@ -1,0 +1,22 @@
+server {
+        server_name		subdomain.example.com;
+
+        access_log              /var/www/subdomain.example.com/logs/access.log combined;
+        access_log              /var/www/subdomain.example.com/logs/perf.log perf;
+        error_log               /var/www/subdomain.example.com/logs/error.log;
+
+        ssl_certificate         /acmecerts/subdomain.example.com/fullchain.cer;
+        ssl_certificate_key     /acmecerts/subdomain.example.com/subdomain.example.com.key;
+        ssl_trusted_certificate /acmecerts/subdomain.example.com/ca.cer;
+
+        include                 snippets/common-conf.conf;
+
+        location / {
+                try_files       $uri @backend;
+        }
+
+        location @backend {
+                include         snippets/proxy-headers.conf;
+                proxy_pass      https://example.com;
+        }
+}
