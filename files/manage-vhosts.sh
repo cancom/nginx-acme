@@ -111,8 +111,8 @@ delete_vhost ()
         acme.sh --remove -d "${DOMAIN}"
     	rm -rf /acmecerts/"${DOMAIN}"
       else
-	    say @b@yellow[["Certificate was already revoked. Skipping."]]
-	  fi
+        say @b@yellow[["Certificate was already revoked. Skipping."]]
+      fi
   fi
 
   nginx -t && /etc/init.d/nginx reload
