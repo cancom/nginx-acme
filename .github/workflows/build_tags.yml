@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 100
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3.1.0
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
