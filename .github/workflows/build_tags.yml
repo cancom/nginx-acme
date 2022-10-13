@@ -32,7 +32,7 @@ jobs:
         run: bash .github/extract_version.sh ${GITHUB_REF}
 
       - name: Build and push all Debian images
-        uses: docker/build-push-action@v3.1.0
+        uses: docker/build-push-action@v3.2.0
         with:
           context: ./
           file: ./Dockerfile
