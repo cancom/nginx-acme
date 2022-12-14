@@ -1,4 +1,4 @@
-FROM nginx:1.23.1
+FROM nginx:1.23.3
 LABEL maintainer="Sina Anvari <sina.anvari@cancom.de>"
 
 # Install cron
